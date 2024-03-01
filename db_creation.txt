@@ -1,0 +1,162 @@
+-- DROP SCHEMA dbo;
+
+CREATE SCHEMA dbo;
+-- InventoryDB.dbo.category definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.category;
+
+CREATE TABLE InventoryDB.dbo.category (
+	category_id int IDENTITY(1,1) NOT NULL,
+	name varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	CONSTRAINT PK_category PRIMARY KEY (category_id)
+);
+
+
+-- InventoryDB.dbo.country definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.country;
+
+CREATE TABLE InventoryDB.dbo.country (
+	country_id smallint IDENTITY(1,1) NOT NULL,
+	country varchar(50) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	CONSTRAINT PK_country PRIMARY KEY (country_id)
+);
+
+
+-- InventoryDB.dbo.item definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.item;
+
+CREATE TABLE InventoryDB.dbo.item (
+	item_id int IDENTITY(1,1) NOT NULL,
+	name varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	description text COLLATE Modern_Spanish_CI_AS DEFAULT NULL NULL,
+	code varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	barcode varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	image_url varchar(512) COLLATE Modern_Spanish_CI_AS NULL,
+	CONSTRAINT PK_item PRIMARY KEY (item_id)
+);
+
+
+-- InventoryDB.dbo.usuario definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.usuario;
+
+CREATE TABLE InventoryDB.dbo.usuario (
+	user_id smallint IDENTITY(1,1) NOT NULL,
+	username varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	password varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	mail varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	CONSTRAINT PK_user PRIMARY KEY (user_id)
+);
+
+
+-- InventoryDB.dbo.actual_pricing definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.actual_pricing;
+
+CREATE TABLE InventoryDB.dbo.actual_pricing (
+	pricing_id int NOT NULL,
+	item_id int NOT NULL,
+	last_update datetime NOT NULL,
+	price decimal(18,0) NOT NULL,
+	CONSTRAINT PK_price PRIMARY KEY (pricing_id,item_id),
+	CONSTRAINT fk_price_item FOREIGN KEY (item_id) REFERENCES InventoryDB.dbo.item(item_id)
+);
+
+
+-- InventoryDB.dbo.city definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.city;
+
+CREATE TABLE InventoryDB.dbo.city (
+	city_id int IDENTITY(1,1) NOT NULL,
+	city varchar(50) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	country_id smallint NOT NULL,
+	CONSTRAINT PK__city PRIMARY KEY (city_id),
+	CONSTRAINT fk_city_country FOREIGN KEY (country_id) REFERENCES InventoryDB.dbo.country(country_id) ON UPDATE CASCADE
+);
+ CREATE NONCLUSTERED INDEX idx_fk_country_id ON dbo.city (  country_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- InventoryDB.dbo.item_category definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.item_category;
+
+CREATE TABLE InventoryDB.dbo.item_category (
+	item_id int NOT NULL,
+	category_id int NOT NULL,
+	CONSTRAINT PK_item_category PRIMARY KEY (item_id,category_id),
+	CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES InventoryDB.dbo.category(category_id),
+	CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES InventoryDB.dbo.item(item_id)
+);
+
+
+-- InventoryDB.dbo.address definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.address;
+
+CREATE TABLE InventoryDB.dbo.address (
+	address_id int IDENTITY(1,1) NOT NULL,
+	address varchar(50) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	city_id int NOT NULL,
+	postal_code varchar(10) COLLATE Modern_Spanish_CI_AS DEFAULT NULL NULL,
+	CONSTRAINT PK__address PRIMARY KEY (address_id),
+	CONSTRAINT fk_address_city FOREIGN KEY (city_id) REFERENCES InventoryDB.dbo.city(city_id) ON UPDATE CASCADE
+);
+ CREATE NONCLUSTERED INDEX idx_fk_city_id ON dbo.address (  city_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- InventoryDB.dbo.store definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.store;
+
+CREATE TABLE InventoryDB.dbo.store (
+	store_id int IDENTITY(1,1) NOT NULL,
+	name varchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	address_id int NOT NULL,
+	CONSTRAINT PK_store PRIMARY KEY (store_id),
+	CONSTRAINT fk_store_address FOREIGN KEY (address_id) REFERENCES InventoryDB.dbo.address(address_id)
+);
+
+
+-- InventoryDB.dbo.inventory definition
+
+-- Drop table
+
+-- DROP TABLE InventoryDB.dbo.inventory;
+
+CREATE TABLE InventoryDB.dbo.inventory (
+	inventory_id int IDENTITY(1,1) NOT NULL,
+	item_id int NOT NULL,
+	store_id int NOT NULL,
+	quantity int NOT NULL,
+	expiration date NOT NULL,
+	CONSTRAINT PK_inventory PRIMARY KEY (inventory_id),
+	CONSTRAINT fk_inv_item FOREIGN KEY (item_id) REFERENCES InventoryDB.dbo.item(item_id),
+	CONSTRAINT fk_inv_store FOREIGN KEY (store_id) REFERENCES InventoryDB.dbo.store(store_id)
+);
+
+
