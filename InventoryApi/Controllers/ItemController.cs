@@ -11,6 +11,7 @@ using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Hosting.Internal;
 
+
 namespace InventoryApi.Controllers
 {
     [ApiController]
@@ -464,6 +465,19 @@ namespace InventoryApi.Controllers
                 return Content(ex.Message);
             }
         }
+
+        [HttpGet("document/{name}")]
+
+        public IActionResult getDocument(string name)
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, @"document\", name);
+
+            Custom.WritePDF(path);
+            
+            var stream = new FileStream(path + ".pdf", FileMode.Open);
+            return File(stream, "application/pdf", "Pdf Chidooo.pdf");
+        }
+
 
 
     }
