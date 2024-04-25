@@ -16,11 +16,14 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.25" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="QuestPDF" Version="2023.12.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
     <ItemGroup>
 	    <Folder Include="DTO\" />
+	    <Folder Include="Models\QuestPDF\Components\" />
+	    <Folder Include="Models\QuestPDF\Document\Models\" />
     </ItemGroup>
 
 </Project>
